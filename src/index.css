@@ -1,0 +1,316 @@
+:root {
+  --bg: #0f1115;
+  --panel: #161a22;
+  --text: #e7e9ee;
+  --muted: #a6adbb;
+  --border: #202635;
+  --accent: #ff5364;
+  --radius: 16px;
+
+  --header-height: 128px; /* висота шапки разом з пошуком */
+}
+
+:root[data-theme="light"] {
+  --bg: #f7f8fb;
+  --panel: #ffffff;
+  --text: #1a2233;
+  --muted: #5b657a;
+  --border: #e4e7ee;
+  --accent: #d12b3b;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =========================
+   ХЕДЕР (fixed з пошуком)
+   ========================= */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  background: rgba(15,17,21,.9);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: saturate(1.1) blur(8px);
+  box-shadow: 0 6px 16px rgba(0,0,0,.18);
+}
+:root[data-theme="light"] .topbar {
+  background: rgba(255,255,255,.92);
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 12px 16px 6px;
+}
+
+.brand {
+  font-weight: 800;
+  text-decoration: none;
+  color: var(--text);
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.nav-link {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+  opacity: .9;
+}
+.nav-link:hover { opacity: 1; }
+.theme-btn {
+  display: grid; place-items: center;
+  width: 36px; height: 36px;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* Пошук усередині хедера */
+.filters {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 6px 16px 12px;
+}
+.filters .row {
+  display: flex;
+  gap: 10px;
+}
+.input, .select {
+  height: 42px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 0 12px;
+  outline: none;
+}
+.input { flex: 1; min-width: 0; }
+.input::placeholder { color: var(--muted); }
+.select { width: 220px; }
+
+/* =========================
+   КОНТЕНТ
+   ========================= */
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px;
+  padding-top: calc(var(--header-height) + 12px); /* відступ під fixed header */
+  padding-bottom: 88px;
+}
+
+.section { margin: 18px 0 26px; }
+.section-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* Сітка */
+.grid { display: grid; gap: 12px; }
+@media (min-width: 640px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* =========================
+   КАРТКИ СТРАВ
+   ========================= */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: box-shadow .2s ease, transform .06s ease;
+}
+.card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.22); }
+.card:active { transform: translateY(1px); }
+
+/* місце під фото */
+.card-media {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+.card-media img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.card-body { padding: 12px; }
+.card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.card-title {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+.meta { margin: .25rem 0 0; color: var(--muted); font-size: 12px; }
+.price-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: .45rem;
+}
+.price { font-weight: 800; }
+.badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: transparent;
+}
+.badge--accent { color: var(--accent); }
+
+/* Кнопка-лайк */
+.heart {
+  display: grid;
+  place-items: center;
+  width: 36px; height: 36px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: #aab2bf;
+  cursor: pointer;
+}
+.heart--active { color: var(--accent); border-color: var(--accent); }
+
+/* Порожній стан */
+.empty {
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+/* =========================
+   ФУТЕР
+   ========================= */
+.footer {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  align-items: center;
+  background: rgba(15,17,21,.88);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+:root[data-theme="light"] .footer {
+  background: rgba(255,255,255,.9);
+}
+.footer-link {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 700;
+}
+/* === 💰 Ціна + бейдж "за 100 г" === */
+
+.price-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.price {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+/* Змінюємо колір ціни залежно від теми */
+:root {
+  --text-primary: #1f1f1f; /* темний текст для світлої теми */
+}
+
+[data-theme="dark"] {
+  --text-primary: #f5f5f5; /* світлий текст для темної теми */
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.2rem 0.6rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.badge--accent {
+  background-color: #ef4444; /* червоний */
+  color: white;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+}
+
+/* 🧱 Мобільна адаптація */
+@media (max-width: 480px) {
+  .price-wrap {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .price {
+    font-size: 0.95rem;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+  }
+  .badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-left: 6px;
+}
+
+.badge--accent {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.badge--dark {
+  background-color: #111;
+  color: #fff;
+  border: 1px solid #fff1;
+}
+
+}
+
+
+
