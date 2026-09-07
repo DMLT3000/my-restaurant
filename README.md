@@ -1,73 +1,73 @@
-# React + TypeScript + Vite
+# Три Карася — цифрове меню
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Редизайн наявного React 19 / TypeScript / Vite проєкту. Репозиторій: DMLT3000/my-restaurant.
 
-Currently, two official plugins are available:
+## Запуск і публікація
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+npm ci
+npm run dev
+npm run build
+npm run lint
+node scripts/validate-menu.mjs
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+`npm run build` перевіряє TypeScript, створює `dist/` і запускає наявний `postbuild`, який копіює `index.html` у `404.html`. `postbuild` використовує PowerShell, як і в початковому проєкті. Для публікації залишається наявна команда `npm run deploy`; `predeploy` спочатку запускає збірку.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Vite base: `/my-restaurant/`. Навігація використовує `HashRouter`:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- `#/` — головна з усіма 16 категоріями та контактами.
+- `#/menu/:category` — обрана категорія; `#/menu/all` — усе меню.
+- `#/favorites` — збережені страви.
+
+`resolve.preserveSymlinks: true` у Vite дозволяє також збирати проєкт із підключеного диска Windows. Це не змінює адресу GitHub Pages чи шляхи public assets. Для public assets використовується збережений helper `asset()` із безпечним об'єднанням `BASE_URL` і відносного шляху.
+
+## Дані та переклади
+
+`src/data/menu.ts` залишено без змін: усі 118 позицій, 16 категорій, вихідні ID, ціни, вага, noPower, note та шляхи до фото. 86 позицій мають фото, 32 — нейтральний placeholder. Підкатегорій і окремих описів у початкових даних немає; вигадані описи та підкатегорії не додавалися.
+
+- `src/i18n/ui.ts` — типізовані написи UA / EN / ES.
+- `src/i18n/menu.ts` — переклади кожної назви та категорії, локалізація ваги; місце для перекладів note, коли описи справді з'являться у меню.
+- `src/i18n/LanguageProvider.tsx`, `context.ts` — спільна мова, ключ `language` у localStorage, синхронізація між вкладками та актуальний `html.lang`.
+- Пошук перевіряє локалізовані назви й описи в усьому меню, ігнорує регістр та діакритичні знаки.
+- Числа не перераховуються. `грн` відображається як `UAH` у EN/ES; дробові варіанти цін на кшталт `130/160/190` збережені.
+- `за 100 г` показується лише для явно вказаної ціни за вагу. Вага `100г` сама по собі не змінює значення ціни.
+
+Переклади прив'язані до незмінного вихідного українського тексту, а не лише до ID: у початкових даних кілька різних страв мають однакові ID. При додаванні позиції додайте її EN/ES у `dishTranslations`; перевірка повідомить про пропущений переклад. При свідомій зміні кількості меню оновіть очікувану кількість у перевірці.
+
+## Закладки та сумісність
+
+Єдина система закладок продовжує використовувати ключ `favorites` і масив рядків у localStorage. `src/lib/favorites.ts` збережено як API сховища, `useFavorites.ts` спільно підписує всі компоненти на зміни.
+
+Дублікати вихідних ID: `beer10`, `cold9`, `cold10`, `sal12`, `sou3`, `sou6`, `meat5`, `pz7`, `st5`, `st9`, `gr3`, `gr4`.
+
+`src/lib/catalog.ts` не змінює жодного `item.id`. Для дубльованих ID він створює окремий ключ `id::оригінальна назва`. Старий неоднозначний ID розгортається в усі позиції, які раніше позначав: даних для визначення конкретної початкової страви у старому сховищі немає. Після одноразової міграції кожна з цих позицій перемикається незалежно. Звичайні ID й невідомі старі ключі зберігаються. Міграція повторювана без додаткових змін. Якщо надалі змінюється українська назва страви з дубльованим ID, потрібне відповідне перенесення її ключа; зміна перекладу ключ не змінює.
+
+Список, модальне вікно, сторінка закладок і лічильник у header синхронізовані. Зміни з інших вкладок отримуються через `storage`. Пошкоджений JSON не зупиняє сайт. Якщо сховище недоступне або запис заборонено, закладки працюють у межах поточного відкритого сеансу.
+
+## Інтерфейс
+
+- `src/App.tsx` — маршрути, пошук, відкриття деталей і відновлення прокрутки.
+- `src/pages/` — HomePage, MenuPage, FavoritesPage, SearchResults.
+- `src/components/` — Header, Logo, LanguageSelector, CategorySelector, SearchBar, DishListItem, DishImage, DishPrice, DishModal, FavoriteButton, MenuSections, EmptyState.
+- `src/lib/format.ts` — спільне форматування ціни та нормалізація пошуку.
+- `src/index.css` — CSS variables, світла палітра, mobile-first компонування, адаптація до desktop, focus і reduced-motion.
+- `index.html` — назва, українська мова за замовчуванням, favicon і метадані.
+- Видалені неактуальні `src/App.css`, `src/MenuCategory.tsx`, `src/FavoritesPage.tsx`; їхню функціональність замінюють нові сторінки й компоненти.
+
+Фото у рядку завжди ліворуч, завантажуються lazy, мають задане співвідношення сторін і fallback при помилці. Modal реалізований через native `dialog` із focus trap, блокуванням body scroll, закриттям через X/Escape/backdrop, поверненням фокуса і позиції списку.
+
+## Assets
+
+- `public/assets/logoKarasi2.svg` — оригінальний логотип без змін; порожні поля SVG обрізаються лише стилями відображення.
+- `public/assets/favicon.svg` — той самий логотип із viewBox навколо його малюнка.
+- `public/assets/hero.png` — наданий орнамент із рибами без змін.
+- Усі початкові файли `public/img` збережені без перейменування або заміни.
+
+Нових npm залежностей немає. Кошик, платежі, замовлення й backend відсутні.
+
+## Перевірки
+
+`scripts/validate-menu.mjs` перевіряє повноту меню і перекладів, унікальні ключі відображення, всі посилання на фотографії з точним регістром, ціни за вагу, різні варіанти цін, міграцію та незалежність закладок, недоступне сховище і `404.html`.
+
+Браузерні перевірки production-збірки: ширини 320/390/768/1440 px, усі 118 рядків, фотографії ліворуч, відсутність горизонтального переповнення, UA/EN/ES і reload, пошук, empty state, legacy favorites, синхронізація між вкладками, native dialog, X/Escape/backdrop, Tab/Shift+Tab, повернення прокрутки та фокуса, прямі hash URL і Back. Помилок JavaScript/console під час перевірки немає.

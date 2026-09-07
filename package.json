@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "preview": "vite preview"
+
+    "postbuild": "powershell -Command Copy-Item -Path dist/index.html -Destination dist/404.html"
   },
   "dependencies": {
     "lucide-react": "^0.544.0",
