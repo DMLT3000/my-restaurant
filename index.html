@@ -5,10 +5,19 @@
     <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f5f4f0" />
+    <script>
+      // Apply the saved theme before the first paint, including while React loads.
+      try {
+        const theme = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#191c18' : '#f5f4f0';
+      } catch { /* Light theme remains available when storage is blocked. */ }
+    </script>
     <meta name="description" content="Три Карася — меню ресторану у Валках. Страви, ціни та улюблені позиції. Щодня 10:00–22:30. вул. Героїв Чорнобиля, 8." />
     <title>Три Карася · Меню</title>
-    <script type="module" crossorigin src="/assets/index-D-q9J3K8.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-yS6Zf6Rv.css">
+    <script type="module" crossorigin src="/assets/index-B2Qb6B_l.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-r4D6XknA.css">
   </head>
   <body>
     <div id="root"></div>
